@@ -28,19 +28,6 @@ function AuthControls() {
   );
 }
 
-function PrivateRoute({ children }) {
-  const { user, ready } = useAuth();
-  if (!ready) return <div className="container py-5 text-secondary">Loading…</div>;
-  if (!user) return <Navigate to="/login" replace />;
-  return children;
-}
-function LoginRoute({ children }) {
-  const { user, ready } = useAuth();
-  if (!ready) return <div className="container py-5 text-secondary">Loading…</div>;
-  if (user) return <Navigate to="/" replace />;
-  return children;
-}
-
 function WelcomeWatcher() {
   const { user } = useAuth();
   const [showWelcome, setShowWelcome] = useState(false);
@@ -48,7 +35,7 @@ function WelcomeWatcher() {
 
   useEffect(() => {
     if (!user) return;
-    let unsub = () => { };
+    let unsub = () => {};
 
     (async () => {
       await ensureUserDoc(user.uid);
@@ -57,7 +44,6 @@ function WelcomeWatcher() {
         if (data?.welcomed === false) setShowWelcome(true);
       });
 
-      // Аирдроп 
       const res = await airdropIfDue(user.uid);
       if (res?.amount) setShowAirdropModal({ amount: res.amount });
     })();
@@ -123,16 +109,21 @@ export default function App() {
 
           <main className="container flex-grow-1 py-3">
             <Routes>
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
+              {/* Public routes */}
+              <Route path="/login" element={<LoginRoute><LoginPage /></LoginRoute>} />
+              <Route path="/register" element={<LoginRoute><RegisterPage /></LoginRoute>} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/leaderboard" element={<LeaderboardPage />} />
 
-              <Route path="/" element={<RequireAuth><Dashboard /></RequireAuth>} />
+              {/* Protected routes */}
               <Route path="/asset/:id" element={<RequireAuth><AssetPage /></RequireAuth>} />
               <Route path="/portfolio" element={<RequireAuth><PortfolioPage /></RequireAuth>} />
               <Route path="/history" element={<RequireAuth><HistoryPage /></RequireAuth>} />
               <Route path="/user-profile" element={<RequireAuth><UserProfile /></RequireAuth>} />
+              <Route path="/" element={<RequireAuth><Dashboard /></RequireAuth>} />
+
+              {/* Redirect for unknown routes */}
+              <Route path="*" element={<Navigate to="/login" replace />} />
             </Routes>
           </main>
 
@@ -149,4 +140,12 @@ function RequireAuth({ children }) {
   if (!user) return <Navigate to="/login" replace />;
   return children;
 }
+
+function LoginRoute({ children }) {
+  const { user, ready } = useAuth();
+  if (!ready) return <div className="container py-5 text-center">Loading…</div>;
+  if (user) return <Navigate to="/" replace />;
+  return children;
+}
+
 
