@@ -123,18 +123,16 @@ export default function App() {
 
           <main className="container flex-grow-1 py-3">
             <Routes>
-              {/* Public routes */}
-              <Route path="/login" element={<LoginRedirect><LoginPage /></LoginRedirect>} />
+              <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/leaderboard" element={<LeaderboardPage />} />
 
-              {/* Protected routes */}
-              <Route path="/" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-              <Route path="/asset/:id" element={<PrivateRoute><AssetPage /></PrivateRoute>} />
-              <Route path="/portfolio" element={<PrivateRoute><PortfolioPage /></PrivateRoute>} />
-              <Route path="/history" element={<PrivateRoute><HistoryPage /></PrivateRoute>} />
-              <Route path="/user-profile" element={<PrivateRoute><UserProfile /></PrivateRoute>} />
+              <Route path="/" element={<RequireAuth><Dashboard /></RequireAuth>} />
+              <Route path="/asset/:id" element={<RequireAuth><AssetPage /></RequireAuth>} />
+              <Route path="/portfolio" element={<RequireAuth><PortfolioPage /></RequireAuth>} />
+              <Route path="/history" element={<RequireAuth><HistoryPage /></RequireAuth>} />
+              <Route path="/user-profile" element={<RequireAuth><UserProfile /></RequireAuth>} />
             </Routes>
           </main>
 
@@ -143,5 +141,12 @@ export default function App() {
       </div>
     </AuthProvider>
   );
+}
+
+function RequireAuth({ children }) {
+  const { user, ready } = useAuth();
+  if (!ready) return <div className="container py-5 text-center">Loading…</div>;
+  if (!user) return <Navigate to="/login" replace />;
+  return children;
 }
 
