@@ -42,7 +42,6 @@ export default function LoginPage() {
         <button type="submit" className="btn btn-primary">Login</button>
       </form>
       <div className="mt-2">
-        <Link to="/reset">Forgot password?</Link>
       </div>
       {error && <p className="text-danger mt-2">{error}</p>}
       {showModal && <Modal message="Successfully logged in!" onClose={closeModal} />}

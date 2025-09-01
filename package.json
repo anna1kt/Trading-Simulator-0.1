@@ -3,10 +3,10 @@
     "private": true,
     "version": "0.1.0",
     "type": "module",
-    "homepage": "https://github.com/anna1kt/Trading-Simulator-0.1.git",
+    "homepage": "https://anna1kt.github.io/Trading-Simulator-0.1",
     "scripts": {
+        "dev": "vite",
         "build": "vite build",
-        "predeploy": "npm run build",
         "deploy": "gh-pages -d dist"
     },
     "dependencies": {
