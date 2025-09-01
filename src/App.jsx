@@ -34,6 +34,12 @@ function PrivateRoute({ children }) {
   if (!user) return <Navigate to="/login" replace />;
   return children;
 }
+function LoginRoute({ children }) {
+  const { user, ready } = useAuth();
+  if (!ready) return <div className="container py-5 text-secondary">Loading…</div>;
+  if (user) return <Navigate to="/" replace />;
+  return children;
+}
 
 function WelcomeWatcher() {
   const { user } = useAuth();
@@ -42,7 +48,7 @@ function WelcomeWatcher() {
 
   useEffect(() => {
     if (!user) return;
-    let unsub = () => {};
+    let unsub = () => { };
 
     (async () => {
       await ensureUserDoc(user.uid);
@@ -118,7 +124,7 @@ export default function App() {
           <main className="container flex-grow-1 py-3">
             <Routes>
               {/* Public routes */}
-              <Route path="/login" element={<LoginPage />} />
+              <Route path="/login" element={<LoginRedirect><LoginPage /></LoginRedirect>} />
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/leaderboard" element={<LeaderboardPage />} />
